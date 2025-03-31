@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { GameBoard } from "@/components/game-board"
 import { Ship, RotateCw } from "lucide-react"
+import { useLanguage } from "@/lib/language-context"
+import type { TranslationKey } from "@/lib/translations"
 
 interface ShipPlacementProps {
   ships: {
@@ -16,6 +18,7 @@ interface ShipPlacementProps {
 }
 
 export function ShipPlacement({ ships, onComplete }: ShipPlacementProps) {
+  const { t } = useLanguage()
   const [board, setBoard] = useState<number[][]>(
     Array(10)
       .fill(0)
@@ -26,14 +29,6 @@ export function ShipPlacement({ ships, onComplete }: ShipPlacementProps) {
   const [placedShips, setPlacedShips] = useState<{
     [key: string]: { x: number; y: number; orientation: "horizontal" | "vertical" }
   }>({})
-
-  const shipNames: { [key: string]: string } = {
-    carrier: "Aircraft Carrier (5)",
-    battleship: "Battleship (4)",
-    cruiser: "Cruiser (3)",
-    submarine: "Submarine (3)",
-    destroyer: "Destroyer (2)",
-  }
 
   const toggleOrientation = () => {
     setOrientation(orientation === "horizontal" ? "vertical" : "horizontal")
@@ -105,7 +100,7 @@ export function ShipPlacement({ ships, onComplete }: ShipPlacementProps) {
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="lg:w-2/3">
         <div className="mb-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold">Place Your Ships</h2>
+          <h2 className="text-xl font-bold">{t("placeYourShips")}</h2>
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -114,7 +109,7 @@ export function ShipPlacement({ ships, onComplete }: ShipPlacementProps) {
               className="border-blue-400 text-blue-300 hover:bg-blue-800"
             >
               <RotateCw className="h-4 w-4 mr-2" />
-              Rotate
+              {t("rotate")}
             </Button>
             <Button
               variant="outline"
@@ -122,7 +117,7 @@ export function ShipPlacement({ ships, onComplete }: ShipPlacementProps) {
               onClick={resetPlacement}
               className="border-blue-400 text-blue-300 hover:bg-blue-800"
             >
-              Reset
+              {t("reset")}
             </Button>
           </div>
         </div>
@@ -132,14 +127,14 @@ export function ShipPlacement({ ships, onComplete }: ShipPlacementProps) {
         {allShipsPlaced && (
           <div className="mt-6">
             <Button onClick={handleComplete} className="bg-green-600 hover:bg-green-700" size="lg">
-              Ready to Battle!
+              {t("readyToBattle")}
             </Button>
           </div>
         )}
       </div>
 
       <div className="lg:w-1/3 bg-blue-900/30 p-4 rounded-lg">
-        <h3 className="font-bold mb-3">Your Fleet</h3>
+        <h3 className="font-bold mb-3">{t("yourFleet")}</h3>
         <div className="space-y-3">
           {Object.entries(ships).map(([key, ship]) => (
             <div
@@ -159,11 +154,11 @@ export function ShipPlacement({ ships, onComplete }: ShipPlacementProps) {
             >
               <Ship className={`h-5 w-5 ${placedShips[key] ? "text-blue-300" : "text-white"}`} />
               <div className="flex-1">
-                <div className="font-medium">{shipNames[key]}</div>
+                <div className="font-medium">{t(key as TranslationKey)}</div>
                 <div className="text-xs text-blue-300">
                   {placedShips[key]
-                    ? `Placed at ${String.fromCharCode(65 + placedShips[key].x)}${placedShips[key].y + 1}`
-                    : "Not placed yet"}
+                    ? `${t("placedAt")} ${String.fromCharCode(65 + placedShips[key].x)}${placedShips[key].y + 1}`
+                    : t("notPlacedYet")}
                 </div>
               </div>
             </div>

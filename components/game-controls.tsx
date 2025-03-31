@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { AlertCircle, Trophy, Clock } from "lucide-react"
+import { useLanguage } from "@/lib/language-context"
 
 interface GameControlsProps {
   currentTurn: "player" | "opponent" | null
@@ -11,6 +12,8 @@ interface GameControlsProps {
 }
 
 export function GameControls({ currentTurn, gamePhase, gameResult, onNewGame }: GameControlsProps) {
+  const { t } = useLanguage()
+
   return (
     <div className="mt-8 p-4 bg-blue-900/30 rounded-lg">
       {gamePhase === "playing" && (
@@ -18,11 +21,7 @@ export function GameControls({ currentTurn, gamePhase, gameResult, onNewGame }: 
           <div className="flex items-center gap-2">
             <Clock className="h-5 w-5 text-blue-300" />
             <span className="font-medium">
-              {currentTurn === "player"
-                ? "Your turn - Fire at the enemy fleet!"
-                : currentTurn === "opponent"
-                  ? "Opponent's turn - Brace for impact!"
-                  : "Waiting..."}
+              {currentTurn === "player" ? t("yourTurn") : currentTurn === "opponent" ? t("opponentTurn") : t("waiting")}
             </span>
           </div>
           <div
@@ -30,7 +29,7 @@ export function GameControls({ currentTurn, gamePhase, gameResult, onNewGame }: 
               currentTurn === "player" ? "bg-green-600/20 text-green-400" : "bg-yellow-600/20 text-yellow-400"
             }`}
           >
-            {currentTurn === "player" ? "ATTACK" : "DEFEND"}
+            {currentTurn === "player" ? t("attack") : t("defend")}
           </div>
         </div>
       )}
@@ -45,18 +44,18 @@ export function GameControls({ currentTurn, gamePhase, gameResult, onNewGame }: 
             {gameResult === "win" ? (
               <>
                 <Trophy className="h-5 w-5" />
-                <span className="font-bold text-lg">Victory! You sank all enemy ships!</span>
+                <span className="font-bold text-lg">{t("victory")}</span>
               </>
             ) : (
               <>
                 <AlertCircle className="h-5 w-5" />
-                <span className="font-bold text-lg">Defeat! Your fleet has been destroyed!</span>
+                <span className="font-bold text-lg">{t("defeat")}</span>
               </>
             )}
           </div>
 
           <Button onClick={onNewGame} className="bg-blue-600 hover:bg-blue-700" size="lg">
-            Play Again
+            {t("playAgain")}
           </Button>
         </div>
       )}

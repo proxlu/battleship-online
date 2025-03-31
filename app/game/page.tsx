@@ -8,8 +8,11 @@ import { ShipPlacement } from "@/components/ship-placement"
 import { GameControls } from "@/components/game-controls"
 import { usePeerConnection } from "@/lib/use-peer-connection"
 import { Ship } from "lucide-react"
+import { useLanguage } from "@/lib/language-context"
+import { LanguageSelector } from "@/components/language-selector"
 
 export default function GamePage() {
+  const { t } = useLanguage()
   const router = useRouter()
   const [gamePhase, setGamePhase] = useState<"connecting" | "placement" | "playing" | "gameOver">("connecting")
   const [playerBoard, setPlayerBoard] = useState<number[][]>(
@@ -187,26 +190,35 @@ export default function GamePage() {
         <header className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
             <Ship className="h-6 w-6" />
-            <h1 className="text-2xl font-bold">Battleship</h1>
+            <h1 className="text-2xl font-bold">{t("title")}</h1>
           </div>
-          <Button variant="outline" onClick={handleNewGame} className="border-blue-400 text-blue-300 hover:bg-blue-800">
-            New Game
-          </Button>
+          <div className="flex items-center gap-4">
+            <LanguageSelector />
+            <Button
+              variant="outline"
+              onClick={handleNewGame}
+              className="border-blue-400 text-blue-300 hover:bg-blue-800"
+            >
+              {t("newGame")}
+            </Button>
+          </div>
         </header>
 
         {gamePhase === "connecting" && (
           <div className="flex flex-col items-center justify-center h-[70vh] space-y-6">
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Finding an opponent...</h2>
-              <p className="text-blue-300">Connection ID: {connectionId || "Generating..."}</p>
+              <h2 className="text-2xl font-bold mb-2">{t("findingOpponent")}</h2>
+              <p className="text-blue-300">
+                {t("connectionId")} {connectionId || t("generating")}
+              </p>
             </div>
 
             <div className="w-full max-w-md p-4 bg-blue-800/30 rounded-lg">
-              <h3 className="font-medium mb-2">Connect with a friend</h3>
+              <h3 className="font-medium mb-2">{t("connectWithFriend")}</h3>
               <div className="flex gap-2">
                 <input
                   type="text"
-                  placeholder="Enter friend's connection ID"
+                  placeholder={t("enterFriendId")}
                   className="flex-1 px-3 py-2 bg-blue-950 rounded border border-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <Button
@@ -216,12 +228,12 @@ export default function GamePage() {
                   }}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
-                  Connect
+                  {t("connect")}
                 </Button>
               </div>
             </div>
 
-            <div className="animate-pulse text-blue-400">Waiting for connection...</div>
+            <div className="animate-pulse text-blue-400">{t("waitingForConnection")}</div>
           </div>
         )}
 
@@ -230,11 +242,11 @@ export default function GamePage() {
         {(gamePhase === "playing" || gamePhase === "gameOver") && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
-              <h2 className="text-xl font-bold mb-3">Your Fleet</h2>
+              <h2 className="text-xl font-bold mb-3">{t("yourFleet")}</h2>
               <GameBoard board={playerBoard} interactive={false} onCellClick={() => {}} />
             </div>
             <div>
-              <h2 className="text-xl font-bold mb-3">Opponent's Fleet</h2>
+              <h2 className="text-xl font-bold mb-3">{t("opponentFleet")}</h2>
               <GameBoard
                 board={opponentBoard}
                 interactive={gamePhase === "playing" && currentTurn === "player"}
